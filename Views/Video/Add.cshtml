@@ -1,0 +1,28 @@
+@{
+      ViewData["Title"] = "Add video";
+      var returnMessage = TempData["ReturnMessage"];
+}
+
+
+      @await Html.PartialAsync("_UploadWaitPartial")
+
+
+<div class="col s10 m5">
+      <form method="post" enctype="multipart/form-data" id="upload-form" asp-controller="video" asp-action="upload">
+            <p>Upload one or more video files of MP4 format(H.264/AAC).</p>
+            <label class="btn btn-small filelbl" for="file_uploads">Choose files</label>
+            <input class="inputfile" type="file" id="file_uploads" name="files" multiple>
+            <button type="button" class="btn btn-small" id="delete_all_files">Clear</button>
+            <button type="submit" class="btn btn-small" id="upload_button" disabled>Upload</button>
+            <div class="container">
+                  <p class="text-danger" id="preview">No files to be uploaded.</p>
+                  <ul id="filesList" class="collection"></ul>
+            </div>
+      </form>
+</div>
+
+<script src="~/js/file.js"></script>
+<script src="~/js/upload.js">
+      
+</script>
+@await Html.PartialAsync("_StatusMessage", returnMessage)

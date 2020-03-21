@@ -1,0 +1,92 @@
+@model Claudia.Models.VideoViewModels.IndexViewModel
+
+@{
+    var returnMessage = TempData["returnMessage"];
+    ViewData["Title"] = "Video info: " + Model.Id;
+}
+
+@if (Model != null)
+{
+<div class="d-flex align-items-center text-center align-content-center flex-wrap row row-margins">
+    <h4>Edit @Model.DisplayName info</h4>
+    <div class="col s8 m8 l8">
+        <img src="/video/thumb?id=@Model.Id" alt="@Model.DisplayName" width="250" height="150" />
+    </div>
+    <div class="col s10 m6 l6 col-centered">
+        <form method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="Id" class="form-control" hidden aria-hidden="true" />
+            <div class="form-group">
+                <label asp-for-name="DisplayName" class="control-label">Display name</label>
+                <input asp-for="DisplayName" class="form-control" />
+                <span asp-validation-for="DisplayName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for-name="Description" class="control-label">Description</label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for-name="CourseId" class="control-label">Course</label>
+                <select asp-for="CourseId">
+                    @if (Model.CourseId != 0)
+                    {
+                        @Model.Courses.TryGetValue(Model.CourseId, out var value);
+                        <option value="@Model.CourseId" selected>@value</option>
+                    }
+                    else
+                    {
+                        <option value="" disabled selected>Choose a course</option>
+                    }
+
+                    @foreach (var course in Model.Courses)
+                    {
+                        <option value="@course.Key">@course.Value</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="collection with-header">
+                        <p class="collection-header">Attachements</p>
+                        @if (Model.Attachements.Count > 0)
+                        {
+                            foreach (var attachement in Model.Attachements)
+                            {
+                                var fileName = System.IO.Path.GetFileName(attachement);
+                                <a class="collection-item" href="/Video/DownloadAttachement/@Model.Id?n=@attachement">@fileName</a>
+                            }
+                        }
+                        else
+                        {
+                            <p>No attachements available.</p>
+                        }
+                    </div>
+                </div>
+                <h5>Add attachement</h5>
+                <div class="file-field input-field">
+                    <div class="btn">
+                        <span>File</span>
+                        <input type="file" asp-for="Files" class="form-control">
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-medium" asp-action="edit" />
+                <a class="btn btn-medium" style="color: white !important;" asp-controller="watch" asp-action="index" asp-route-v="@Model.Id" aria-disabled="True">Watch it here.</a>
+            </div>
+        </form>
+    </div>
+</div>
+}
+else
+{
+    <h2>No id provided or resource of given id does not exist.</h2>
+    <p>Sorry, but the url you've entered is broken as it doesn't contain the proper resource identifier.</p>
+}
+@await Html.PartialAsync("_StatusMessage", returnMessage)

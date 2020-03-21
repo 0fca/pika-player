@@ -1,0 +1,150 @@
+@using Microsoft.EntityFrameworkCore
+@model Claudia.Models.WatchViewModels.WatchViewModel
+@inject Microsoft.AspNetCore.Identity.UserManager<User> UserManager
+
+@if(Model != null){
+      
+ {
+       var videoName = Model.CurrentVideo.DisplayName;
+       ViewData["Title"] = $"Watch - {videoName}";
+       
+ }
+      <div class="row">
+            <div class="col s12 m8 l8">
+                  <video class="responsive-video" controls width="60%">
+                              <source src="/watch/stream?path=@Model.CurrentVideo.VideoPath" type="video/mp4">
+                        </video>
+                  <div>
+                        <h5 class="truncate">@Model.CurrentVideo.DisplayName</h5>
+                        <hr>
+                        @{
+                              var lecturerName = (await UserManager.Users.FirstAsync(user => user.Id.Equals(@Model.CurrentVideo.LecturerId)));
+                        }
+                        <span>
+                              <p><i class="material-icons">account_circle</i><b>@lecturerName.Email</b></p>
+                              <p>@Model.CurrentVideo.DateAdded.Date.ToLongDateString()</p>
+                        </span>
+
+
+                        <p>@Model.CurrentVideo.Description</p>
+                  </div>
+                  <hr>
+                  <h4>Attachements</h4>
+                  <div class="collection">
+                        @foreach (var attachement in Model.Attachements)
+                        {
+                              var fileName = System.IO.Path.GetFileName(attachement);
+                              <a class="collection-item" href="/Video/DownloadAttachement/@Model.CurrentVideo.Id?n=@attachement">@fileName</a>
+                        }
+                  </div>
+            </div>
+
+
+            <div class="col s12 m4 l4 right">
+                <h4>Other videos:</h4>
+                  <ul>
+                        @foreach (var (key, value) in Model.Ids.Where(id => !id.Key.Equals(Model.CurrentVideo.Id)))
+                        {
+                              <li>
+                                    <a asp-controller="Watch" asp-action="Index" asp-route-v="@key">
+                                          <img src="/Video/Thumb?id=@key" alt="@value" height="80" width="120"/>
+                                          <p>@value</p>
+                                    </a>
+                              </li>
+                        }
+                  </ul>
+            </div>
+            
+      </div>
+     
+      <div class="row">
+            <form asp-controller="Watch" asp-action="Comment" method="post">
+                  <div class="col s12 m8 l8">
+                        <label for="comment-box">Write your comment...</label>
+                        <input name="c" type="text" aria-multiline="true" id="comment-box"/>
+                        <input name="id" value="@Model.CurrentVideo.Id"  hidden/>
+                        <button class="btn btn-default right" type="submit" id="post-comment">Send</button>
+                  </div>
+            </form>
+            
+      </div>
+      
+      <div class="row">
+           
+            <div class="col s12 m8 l8">
+                  <ul class="collapsible">
+                        @foreach (var comment in @Model.Comments)
+                        {
+                              var cid = TempData["cid"];
+                              var shouldBeActive = (comment.Key.CommentId == (string) cid);
+                              var liClass = shouldBeActive ? "active" : "";
+                              <li class="@liClass">
+                                    <div class="collapsible-header">
+
+                                          <p><i class="material-icons">person</i><b>@await UserManager.Users.FirstAsync(user => user.Id == comment.Key.UserId)</b>:
+                                                @comment.Key.Content</p>
+                                    </div>
+                                    <div class="collapsible-body">
+                                          @{
+                                                var subcommentList = comment.Value;
+                                          }
+                                          @if (subcommentList.Count > 0)
+                                          {
+                                                <table>
+                                                      @foreach (var subcomment in subcommentList)
+                                                      {
+                                                            <tr>
+                                                                  <td>
+
+                                                                        <i class="material-icons">person</i>
+                                                                  </td>
+                                                                  <td>
+                                                                        <p>@await UserManager.Users.FirstAsync(user => user.Id == subcomment.UserId)</p>
+
+                                                                  </td>
+                                                                  <td>
+                                                                        @subcomment.SubContent
+                                                                  </td>
+                                                            </tr>
+                                                      }
+                                                </table>
+                                          }
+                                          else
+                                          {
+                                                <p>No comments.</p>
+                                          }
+                                          <form asp-controller="Watch" asp-action="SubComment" method="post">
+                                          <div class="row">
+                                                <div class="col s12 m7 l7">
+                                                      <input name="c" type="text" placeholder="Answer the comment..." aria-multiline/>
+                                                      <input name="cid" value="@comment.Key.CommentId" hidden/>
+                                                      <input name="vid" value="@comment.Key.VideoId" hidden/>
+                                                </div>
+                                                <div class="col s12 m2 l2">
+                                                      <button class="btn btn-flat" type="submit">
+                                                            <i class="material-icons">
+                                                                  send
+                                                            </i>
+                                                      </button>
+                                                </div>
+                                          </div>
+                                          </form>
+                                    </div>
+                              </li>
+                        }
+
+                  </ul>
+            </div>
+            
+      </div>
+}
+else
+{
+      <h2>No id provided or resource of given id does not exist.</h2>
+      <p>Sorry, but the url you've entered is broken as it doesn't contain the proper resource identifier.</p>
+}
+
+@{
+      var returnMessage = TempData["returnMessage"];
+}
+@await Html.PartialAsync("_StatusMessage", returnMessage)

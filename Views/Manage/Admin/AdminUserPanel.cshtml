@@ -1,0 +1,64 @@
+@model Claudia.Models.AdminPanelViewModel
+
+@{
+    ViewData["Title"] = "Manage users - Admin";
+    var msg = ViewData["returnMessage"];
+}
+
+<h3>@ViewData["Title"]</h3>
+
+@await Html.PartialAsync("_StatusMessage", msg)
+<div class="row">
+    <a class="btn btn-primary left" asp-controller="Account" asp-action="Register">Add user</a>
+</div>
+<div id="container">
+    <div class="row" style="padding-top: 10px; padding-bottom: 10px; font-weight: bold;">
+        <div class="col s5">
+            Username
+        </div>
+        <div class="col s3">
+            Permission level
+        </div>
+        <div class="col s4">
+            Options
+        </div>
+    </div>
+    <div class="div-table">
+        @foreach (var item in Model.UsersWithRoles)
+        {
+            var roleString = "";
+            item.Value.ToAsyncEnumerable().ForEachAsync(role =>
+            {
+                roleString = string.Concat(roleString, " ", role);
+            });
+                
+            <div class="row">
+                <div class="col s5 truncate">
+                    @Html.DisplayFor(modelItem => item.Key.UserName)
+                </div>
+                <div class="col s3">
+                
+                @Html.DisplayFor(modelItem => roleString)
+                </div>
+                    <div class="col s4">
+                        <a asp-action="EditUser" asp-controller="Manage" asp-route-id=@item.Key.Id><i class="material-icons">
+                            create
+                        </i></a>
+                        <a asp-action="DeleteUser" asp-controller="Manage" asp-route-id="@item.Key.Id"><i class="material-icons">
+                            delete_forever
+                        </i></a>
+                        <a asp-action="GeneratePassword" asp-controller="Manage" asp-route-id="@item.Key.Id"><i class="material-icons">
+                            fingerprint
+                        </i></a>
+                    </div>
+            </div>
+        }     
+    </div>
+    <div id="downloadPartialDiv">
+        @await Html.PartialAsync("/Views/Manage/Admin/_GeneratePasswordViewPartial.cshtml")
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

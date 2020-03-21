@@ -1,0 +1,27 @@
+@page
+@model Claudia.Pages.SecurityPolicy
+
+@{
+    ViewData["Title"] = "Security Policy";
+    Layout = "_Layout";
+}
+
+<div class="row">
+    <h2>Security Policy</h2>
+    <div class="col">
+        
+        @if (Model != null 
+             &&Model.Rules.Length > 0)
+        {
+            <p class="flow-text">This page contains security policy statement. </p>
+            <p class="flow-text">The statement consists of the following rules:</p>
+            <p class="flow-text">
+                @Model.Rules
+            </p>
+        }
+        else
+        {
+            <p>The rules are not defined yet.</p>
+        }
+    </div>
+</div>

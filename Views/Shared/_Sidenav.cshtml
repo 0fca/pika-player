@@ -1,0 +1,17 @@
+﻿@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+<li>
+    <div class="user-view justify-content-center">
+        <a asp-area="" asp-controller="home" asp-action="index" class="logo-position">
+            <img src="~/images/logo-utp.png" alt="Jebać rektora" width="128" height="128"/>
+        </a>
+    </div>
+</li>
+<li><a class="navlink waves-effect waves-orange" asp-area="" asp-controller="watch" asp-action="search"><i class="material-icons">search</i>Search</a></li>
+<li><a class="navlink waves-effect waves-orange" asp-area="" asp-controller="home" asp-action="contact"><i class="material-icons">
+    perm_contact_calendar
+</i>Contact</a></li>
+<li><a class="navlink waves-effect waves-orange" asp-area="" asp-controller="home" asp-action="about"><i class="material-icons">
+    info
+</i>About</a></li>

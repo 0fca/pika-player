@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "DeleteConfirmation";
+    var id = ViewData["id"];
+}
+
+<h2>DeleteConfirmation</h2>
+<div class="row">
+    <div class="col s8 m5 l4">
+        <form asp-controller="video" asp-action="deleteconfirmation" asp-route-v="@id" method="post">
+                <h4>Delete the video.</h4>
+                <p>You are about to delete the video of id @id , are you sure?</p>
+                <button class="btn btn-danger" type="submit">Delete</button>
+                <a class="btn btn-primary" href="/video/list">Cancel</a>
+        </form>
+    </div>
+</div>
+

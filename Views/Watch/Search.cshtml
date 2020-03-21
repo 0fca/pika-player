@@ -1,0 +1,76 @@
+@model Claudia.Models.SearchViewModels.SearchViewModel
+@inject IVideoService LectureService
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+<h2>Search lectures</h2>
+<div class="row align-content-center">
+    <form asp-controller="Watch" asp-action="Search" method="get">
+        <div class="col s12 m7 l7">
+            <label for="searchinput">Enter search phrase:</label>
+            <input asp-for="SearchPhrase" type="text" id="searchinput" placeholder="Enter search phrase"/>
+        </div>
+    <div class="col s12 m7 l7">
+        <!-- Dropdown Trigger -->
+        <div class="input-field col s12">
+            <select id="order-select" asp-for="Order">
+                <option value="" disabled selected>Choose order</option>
+                <option value="0">Ascending</option>
+                <option value="1">Descending</option>
+            </select>
+        </div>
+           
+        <div class="input-field col s12">
+            <select id="course-select" name="course" asp-for="Course">
+                <option value="" disabled selected>Choose course</option>
+                @foreach (var course in await ((LectureService) LectureService).GetCoursesAsync())
+                {
+                    <option>@course.Value</option>
+                }
+            </select>
+        </div>
+        <button class="btn btn-medium" type="submit">Filter</button>
+        <button id="resetbtn" class="btn btn-medium">Reset</button>
+        
+    </div>
+    </form>
+</div>
+<div>
+    <h4>Accessible videos</h4>
+    <ul class="collection">
+        @{
+            var list = Model.Videos;
+        }
+
+        @foreach (var video in list.Where(l => !l.IsLocked))
+        {
+            <li>
+                <div class="collection-item row">
+                    <div class="col s8 m5 l3 left">
+                        <a asp-controller="Watch" asp-action="Index" asp-route-v="@video.Id">
+                            <object data="/video/thumb?id=@video.Id" type="image/png" width="250" height="150">
+                                <i class="material-icons">
+                                    photo_size_select_actual
+                                </i>
+                                </object>
+                        </a>
+                    </div>
+                    <div class="col s8 m5 l4 left">
+                        <h5>@video.DisplayName</h5>
+                        <p>@video.Description</p>
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+
+</div>
+<script>
+    document.getElementById("resetbtn").addEventListener("click", () => {
+        document.getElementById("searchinput").value = "";
+        document.getElementById("order-select").value = "";
+        document.getElementById("course-select").value = "";
+    })
+</script>

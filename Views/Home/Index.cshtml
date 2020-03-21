@@ -1,0 +1,27 @@
+@model Claudia.Models.HomeViewModels.IndexViewModel
+@{
+    ViewData["Title"] = "Index";
+    
+}
+
+    <div class="row">
+        <h2>Newest</h2>
+        @if (Model.LatestVideos != null && Model.LatestVideos.Count > 0)
+        {
+            foreach (var lecture in Model.LatestVideos.Where(l => !l.IsLocked))
+            {
+                <div class="col s8 m5 l6">
+                    <a id="@lecture.Id" asp-controller="Watch" asp-action="Index" asp-route-v="@lecture.Id">
+                        <img src="/video/thumb?id=@lecture.Id" alt="@lecture.DisplayName" width="250" height="150" />
+                    </a>
+                    <p class="thumbtxt truncate">@lecture.DisplayName</p>
+                    <label class="truncate" for="@lecture.Id">@lecture.Description</label>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No videos uploaded at the moment.</p>
+        }
+
+    </div>

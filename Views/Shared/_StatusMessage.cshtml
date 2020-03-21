@@ -1,0 +1,9 @@
+﻿@model string
+
+@if (!string.IsNullOrEmpty(Model)) { 
+
+    var type = (Model.Contains("error") || Model.Contains("Error")) ? "times" : "check";
+    <script>
+        M.toast({ html: "<i class='fas fa-@type'>@Model</i>" });
+    </script>
+}

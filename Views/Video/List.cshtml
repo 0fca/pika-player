@@ -1,0 +1,67 @@
+@using Microsoft.EntityFrameworkCore
+@model Claudia.Models.VideoViewModels.VideoListViewModel
+@inject Claudia.Services.IVideoService LectureService
+@inject UserManager<User> UserManager
+@{
+     ViewData["Title"] = "List videos";
+     var returnMessage = TempData["returnMessage"];
+}
+
+<h3>List of videos</h3>
+@{
+     var courses = await ((LectureService)LectureService).GetCoursesAsync();
+}
+<div class="row">
+    <form asp-controller="video" asp-action="unlock" asp-route-id="all" method="post">
+        <button class="btn btn-flat right" type="submit">Unlock all</button>
+    </form>
+</div>
+<form asp-controller="video" asp-action="unlock" method="post">
+    @foreach (var course in courses)
+    {
+        var lid = (await LectureService.GetCourseById(course.Key)).LecturerId;
+
+
+        if (lid == UserManager.GetUserId(User) || string.IsNullOrEmpty(lid))
+        {
+            <div class="collection with-header">
+                <div class="collection-header"><h4>@course.Value</h4></div>
+                @foreach (var video in @Model.Lectures.Where(video => video.CourseId == course.Key))
+                {
+                    <div class="collection-item row">
+                        <div class="col s8 m5 l4">
+                            <a asp-controller="video" asp-action="index" asp-route-v="@video.Id">
+                                <object data="/video/thumb?id=@video.Id" type="image/png" width="128" height="64">
+                                      <i class="material-icons">
+                                        photo_size_select_actual
+                                      </i>
+                                    </object>
+                                @video.DisplayName
+                            </a>
+                        </div>
+                            
+                        <div class="col s8 m5 l2 right">
+                            @if (video.IsLocked)
+                            {
+                                <button class="btn-flat right" name="id" value="@video.Id" type="submit">
+                                    <i class="material-icons">
+                                        lock_open
+                                    </i>
+                                </button>
+                            }
+                            <a class="btn-flat right" asp-controller="video" asp-action="delete" asp-route-v="@video.Id">
+                                <i class="material-icons">
+                                    delete_forever
+                                </i>
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+    }
+</form>
+
+<a class="btn-floating btn-large waves-effect waves-light red fab-position" asp-controller="video" asp-action="add"><i class="material-icons">add</i></a>
+    @await Html.PartialAsync("_StatusMessage", returnMessage)

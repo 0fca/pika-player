@@ -1,0 +1,21 @@
+﻿@using Claudia.Views.Manage
+@inject SignInManager<User> SignInManager
+@{
+    var isAdmin = SignInManager.Context.User.IsInRole("Admin");
+    var isLecturer = SignInManager.Context.User.IsInRole("Lecturer");
+}
+
+<ul class="tabs tabs-fixed-width">
+    <li class="col s4 tab @ManageNavPages.IndexNavClass(ViewContext)"><a target="_self" asp-action="index">Profile</a></li>
+    <li class="col s4 tab @ManageNavPages.ChangePasswordNavClass(ViewContext)"><a target="_self" asp-action="changepassword">Password</a></li>
+    @if(isAdmin)
+    {
+        <li class="col s4 tab @ManageNavPages.AdminPanelNavClass(ViewContext)"><a target="_self" asp-action="adminpanel">Admin panel</a></li>
+    }
+    
+    @if(isAdmin || isLecturer)
+    {
+        <li class="col s4 tab @ManageNavPages.AdminPanelNavClass(ViewContext)"><a target="_self" asp-controller="video" asp-action="list">Videos</a></li>
+    }
+</ul>
+

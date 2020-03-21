@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UTP Lectures - @ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+    <link rel="shortcut icon" type="image/png" href="~/images/logooftheyear2018.png"/>
+</head>
+<body>
+<main>
+<div class="navbar-fixed nav-wrapper">
+    <nav class="navbar-color">
+        <a href="#" data-target="slide-out" class="sidenav-trigger show-on-large left"><i class="material-icons">menu</i></a>
+        @await Html.PartialAsync("_LoginPartial")
+    </nav>
+</div>
+<ul id="slide-out" class="sidenav own-sidenav">
+    @await Html.PartialAsync("_Sidenav")
+</ul>
+
+<div class="container d-flex justify-content-center container-padding">
+    @RenderBody()
+</div>
+</main>
+<footer class="page-footer footer">
+    <div class="footer-copyright">
+        <div class="container">
+            © @DateTime.Now.Year UTP Lectures
+            <a class="grey-text text-lighten-3 right" href="/SecurityPolicy">Site's security policy</a>
+        </div>
+    </div>
+</footer>
+<environment exclude="Development">
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+            asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+            asp-fallback-test="window.jQuery"
+            crossorigin="anonymous"
+            integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
+    </script>
+    <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
+            asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+            asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+            crossorigin="anonymous"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
+    </script>
+</environment>
+<script src="~/js/main.js"></script>
+@RenderSection("Scripts", required: false)
+</body>
+</html>
