@@ -1,2 +1,2 @@
-# Pika Player aka Justine
-Justine - a media viewer, a component of bigger establishment - Pika Cloud
+# Pika Player aka Silvia
+Pika Player - a media viewer, a component of bigger establishment - Pika Cloud
